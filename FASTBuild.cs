@@ -98,17 +98,17 @@ namespace UnrealBuildTool
 		/*---- Configurable User settings ----*/
 
 		// Used to specify a non-standard location for the FBuild.exe, for example if you have not added it to your PATH environment variable.
-		public static string FBuildExePathOverride = "";
+		public static string FBuildExePathOverride = @"E:/FASTBUILD/FBuild.exe";
 
 		// Controls network build distribution
 		private bool bEnableDistribution = true;
 
 		// Controls whether to use caching at all. CachePath and CacheMode are only relevant if this is enabled.
-		private bool bEnableCaching = false;
+		private bool bEnableCaching = true;
 
 		// Location of the shared cache, it could be a local or network path (i.e: @"\\DESKTOP-BEAST\FASTBuildCache").
 		// Only relevant if bEnableCaching is true;
-		private string CachePath = @"\\SharedDrive\FASTBuildCache";
+		private string CachePath = @"./Caching";
 
 		public enum eCacheMode
 		{
@@ -522,9 +522,6 @@ namespace UnrealBuildTool
 
 				switch (VCEnv.Compiler)
 				{
-					case WindowsCompiler.VisualStudio2015:
-						platformVersionNumber = "140";
-						break;
 
 					case WindowsCompiler.VisualStudio2017:
 						// For now we are working with the 140 version, might need to change to 141 or 150 depending on the version of the Toolchain you chose
@@ -591,12 +588,7 @@ namespace UnrealBuildTool
 				AddText(string.Format("\t\t'$Root$/msobj{0}.dll'\n", platformVersionNumber));
 				AddText(string.Format("\t\t'$Root$/mspdb{0}.dll'\n", platformVersionNumber));
 
-				if (VCEnv.Compiler == WindowsCompiler.VisualStudio2015)
-				{
-					AddText(string.Format("\t\t'{0}/VC/redist/x64/Microsoft.VC{1}.CRT/msvcp{2}.dll'\n", VCInstallDir.ToString(), platformVersionNumber, platformVersionNumber));
-					AddText(string.Format("\t\t'{0}/VC/redist/x64/Microsoft.VC{1}.CRT/vccorlib{2}.dll'\n", VCInstallDir.ToString(), platformVersionNumber, platformVersionNumber));
-				}
-				else if (VCEnv.Compiler == WindowsCompiler.VisualStudio2017)
+				if (VCEnv.Compiler == WindowsCompiler.VisualStudio2017)
 				{
 					//VS 2017 is really confusing in terms of version numbers and paths so these values might need to be modified depending on what version of the tool chain you
 					// chose to install.
@@ -605,8 +597,8 @@ namespace UnrealBuildTool
 				}
 				else if (VCEnv.Compiler == WindowsCompiler.VisualStudio2019)
 				{
-					AddText(string.Format("\t\t'{0}/VC/Redist/MSVC/14.22.27821/x64/Microsoft.VC142.CRT/msvcp{1}.dll'\n", VCInstallDir.ToString(), platformVersionNumber));
-					AddText(string.Format("\t\t'{0}/VC/Redist/MSVC/14.22.27821/x64/Microsoft.VC142.CRT/vccorlib{1}.dll'\n", VCInstallDir.ToString(), platformVersionNumber));
+					AddText(string.Format("\t\t'{0}/VC/Redist/MSVC/14.25.28508/x64/Microsoft.VC142.CRT/msvcp{1}.dll'\n", VCInstallDir.ToString(), platformVersionNumber));
+					AddText(string.Format("\t\t'{0}/VC/Redist/MSVC/14.25.28508/x64/Microsoft.VC142.CRT/vccorlib{1}.dll'\n", VCInstallDir.ToString(), platformVersionNumber));
 				}
 
 				AddText("\t}\n"); //End extra files
@@ -734,6 +726,7 @@ namespace UnrealBuildTool
 
 			string OtherCompilerOptions = GetOptionValue(ParsedCompilerOptions, "OtherOptions", Action);
 			string CompilerOutputExtension = ".unset";
+			OtherCompilerOptions = OtherCompilerOptions.Replace("we4668", "wd4668");
 
 			if (ParsedCompilerOptions.ContainsKey("/Yc")) //Create PCH
 			{
