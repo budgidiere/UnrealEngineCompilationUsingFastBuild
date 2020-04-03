@@ -101,7 +101,7 @@ namespace UnrealBuildTool
 		public static string FBuildExePathOverride = @"E:/FASTBUILD/FBuild.exe";
 
 		// Controls network build distribution
-		private bool bEnableDistribution = true;
+		private bool bEnableDistribution = false;
 
 		// Controls whether to use caching at all. CachePath and CacheMode are only relevant if this is enabled.
 		private bool bEnableCaching = true;
@@ -674,13 +674,14 @@ namespace UnrealBuildTool
 			{
 				SourceFileExtension = ".c";
 			}
+			
 
 			if (IsMSVC() && string.IsNullOrEmpty(OutputObjectFileName)) // Didn't find /Fo, try /fo
 			{
 				OutputObjectFileName = GetOptionValue(ParsedCompilerOptions, "/fo", Action, ProblemIfNotFound: true);
 			}
 
-			if (string.IsNullOrEmpty(OutputObjectFileName)) //No /Fo or /fo, we're probably in trouble.
+			if (string.IsNullOrEmpty(OutputObjectFileName) && SourceFileExtension != ".ispc") //No /Fo or /fo, we're probably in trouble.
 			{
 				Log.TraceError("We have no OutputObjectFileName. Bailing.");
 				return;
@@ -726,7 +727,8 @@ namespace UnrealBuildTool
 
 			string OtherCompilerOptions = GetOptionValue(ParsedCompilerOptions, "OtherOptions", Action);
 			string CompilerOutputExtension = ".unset";
-			OtherCompilerOptions = OtherCompilerOptions.Replace("we4668", "wd4668");
+			OtherCompilerOptions = OtherCompilerOptions.Replace("we4668", "wd4668 /wd4800"); //hack for some errors with headers and stuff and complier issues that started happening in VS 16.5
+			//OtherCompilerOptions = OtherCompilerOptions.Add("wd4800");
 
 			if (ParsedCompilerOptions.ContainsKey("/Yc")) //Create PCH
 			{
@@ -881,7 +883,7 @@ namespace UnrealBuildTool
 				{
 					if (IsMSVC())
 						// /ignore:4042 to turn off the linker warning about the output option being present twice (command-line + rsp file)
-						AddText(string.Format("\t.LibrarianOptions = ' /OUT:\"%2\" /ignore:4042 @\"{0}\" \"%1\"' \n", ResponseFilePath));
+						AddText(string.Format("\t.LibrarianOptions = ' /OUT:\"%2\" /ignore:4042 /ignore:4800 @\"{0}\" \"%1\"' \n", ResponseFilePath));
 					else if (IsPS4())
 						AddText(string.Format("\t.LibrarianOptions = '\"%2\" @\"%1\"' \n", ResponseFilePath));
 					else
