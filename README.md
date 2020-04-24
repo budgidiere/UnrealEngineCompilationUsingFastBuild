@@ -1,10 +1,10 @@
-# Compile Unreal Engine 4.22 using FastBuild
+# Compile Unreal Engine 4.24 using FastBuild
 
 ## Implementation notes
 #### Currently supported platforms
-- Win64 - tested with Windows 10, Visual Studio 2019 Community, Unreal Engine 4.22.3, FastBuild v0.98.
+- Win64 - tested with Windows 10, Visual Studio 2019 Community, Unreal Engine 4.24.2, FastBuild v0.99.
 
-#### Recently supported platforms
+#### Not test
 - Durango was fully supported using VS2015 at some point in the past, but VS2015 is not supported since 4.22;
 - Orbis will require some changes.
 
@@ -13,6 +13,12 @@
 - iOS;
 - Linux;
 - and others...
+
+#### Changes
+- ParseOriginalCommandPathAndArguments() now checks link-filter.exe.
+- Add UE4ISPCCompiler to compile ispc files.
+- Modify AddCompileAction() to compile ispc header/obj, cc.obj correctly.
+- Modify AddLinkAction() to check link-filter.exe command and generate Link Action correctly.
 
 ## Main idea
 The main difference from Yassine Riahi & Liam Flookes version is in added support for dependency files.
