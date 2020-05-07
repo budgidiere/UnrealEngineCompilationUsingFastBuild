@@ -922,6 +922,7 @@ namespace UnrealBuildTool
 
 			string ResponseFilePath = GetOptionValue(ParsedLinkerOptions, "@", Action);
 			string OtherCompilerOptions = GetOptionValue(ParsedLinkerOptions, "OtherOptions", Action);
+			OtherCompilerOptions = OtherCompilerOptions.Replace("we4668", "wd4668 /wd4800");
 
 			List<int> PrebuildDependencies = new List<int>();
 
